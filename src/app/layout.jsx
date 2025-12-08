@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} text-white min-h-screen`}>
         <AuthProvider>
           <Navbar />
-          <main className="min-h-screen bg-linear-to-br from-gray-900 via-purple-900 to-gray-900">
+          <main className="min-h-screen bg-linear-to-br from-gray-900 via-purple-900 to-gray-900 pb-12">
             {children}
           </main>
           <Footer />
