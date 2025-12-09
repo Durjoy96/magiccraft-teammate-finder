@@ -25,23 +25,38 @@ export async function POST(request) {
       return NextResponse.json({ error: "Request not found" }, { status: 404 });
     }
 
-    // Update request status
-    await db
-      .collection("teamRequests")
-      .updateOne(
-        { _id: new ObjectId(requestId) },
-        { $set: { status: "accepted", updatedAt: new Date() } }
-      );
-
-    // Create team
-    const team = await db.collection("teams").insertOne({
-      members: [teamRequest.senderId, teamRequest.receiverId],
-      createdAt: new Date(),
+    // Check if team already exists between these users
+    let existingTeam = await db.collection("teams").findOne({
+      members: { $all: [teamRequest.senderId, teamRequest.receiverId] },
     });
+
+    let teamId;
+    if (existingTeam) {
+      teamId = existingTeam._id;
+    } else {
+      // Create new team
+      const team = await db.collection("teams").insertOne({
+        members: [teamRequest.senderId, teamRequest.receiverId],
+        createdAt: new Date(),
+      });
+      teamId = team.insertedId;
+    }
+
+    // Update request status and link to team
+    await db.collection("teamRequests").updateOne(
+      { _id: new ObjectId(requestId) },
+      {
+        $set: {
+          status: "accepted",
+          teamId: teamId.toString(),
+          updatedAt: new Date(),
+        },
+      }
+    );
 
     return NextResponse.json({
       message: "Request accepted",
-      teamId: team.insertedId,
+      teamId: teamId.toString(),
     });
   } catch (error) {
     console.error("Accept request error:", error);

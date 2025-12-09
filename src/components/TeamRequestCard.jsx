@@ -1,16 +1,29 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import RoleBadge from "./RoleBadge";
-import { Check, X, Clock } from "lucide-react";
+import { Check, X, Clock, MessageSquare } from "lucide-react";
 
 export default function TeamRequestCard({ request, type, onAction }) {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const otherUser = type === "incoming" ? request.sender : request.receiver;
 
   const handleAction = async (action) => {
     setLoading(true);
-    await onAction(request._id, action);
+    const result = await onAction(request._id, action);
+
+    // If accepted and we got a teamId, redirect to chat
+    if (action === "accept" && result?.teamId) {
+      router.push(`/team/${result.teamId}`);
+    }
     setLoading(false);
+  };
+
+  const handleOpenChat = () => {
+    if (request.teamId) {
+      router.push(`/team/${request.teamId}`);
+    }
   };
 
   return (
@@ -38,7 +51,7 @@ export default function TeamRequestCard({ request, type, onAction }) {
           <button
             onClick={() => handleAction("accept")}
             disabled={loading}
-            className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-500 transition-colors disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors disabled:opacity-50"
           >
             <Check className="w-4 h-4" />
             Accept
@@ -46,7 +59,7 @@ export default function TeamRequestCard({ request, type, onAction }) {
           <button
             onClick={() => handleAction("reject")}
             disabled={loading}
-            className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-200 text-red-950 font-semibold hover:opacity-80 transition-colors disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 transition-colors disabled:opacity-50"
           >
             <X className="w-4 h-4" />
             Reject
@@ -54,15 +67,25 @@ export default function TeamRequestCard({ request, type, onAction }) {
         </div>
       )}
 
-      {request.status !== "pending" && (
-        <div
-          className={`text-center py-2 rounded-lg ${
-            request.status === "accepted"
-              ? "bg-green-500/20 text-green-400"
-              : "bg-red-500/20 text-red-400"
-          }`}
+      {request.status === "pending" && type === "sent" && (
+        <div className="text-center py-2 rounded-lg bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+          Waiting for response...
+        </div>
+      )}
+
+      {request.status === "accepted" && (
+        <button
+          onClick={handleOpenChat}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold"
         >
-          {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+          <MessageSquare className="w-4 h-4" />
+          Open Team Chat
+        </button>
+      )}
+
+      {request.status === "rejected" && (
+        <div className="text-center py-2 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30">
+          Request Rejected
         </div>
       )}
     </div>

@@ -42,13 +42,17 @@ export default function RequestsPage() {
       });
 
       if (res.ok) {
-        fetchRequests();
+        const data = await res.json();
+        await fetchRequests(); // Refresh the list
+        return data; // Return data so TeamRequestCard can access teamId
       } else {
         const data = await res.json();
         alert(data.error || "Action failed");
+        return null;
       }
     } catch (error) {
       alert("An error occurred");
+      return null;
     }
   };
 
@@ -59,6 +63,10 @@ export default function RequestsPage() {
       return req.senderId === session?.user?.id;
     }
   });
+
+  const pendingCount = requests.filter(
+    (r) => r.status === "pending" && r.receiverId === session?.user?.id
+  ).length;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
@@ -76,7 +84,7 @@ export default function RequestsPage() {
         <div className="flex border-b border-gray-700">
           <button
             onClick={() => setActiveTab("incoming")}
-            className={`cursor-pointer flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
+            className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
               activeTab === "incoming"
                 ? "bg-purple-600 text-white"
                 : "bg-gray-800/50 text-gray-400 hover:text-gray-300"
@@ -84,24 +92,15 @@ export default function RequestsPage() {
           >
             <Inbox className="w-5 h-5" />
             Incoming
-            {filteredRequests.filter(
-              (r) =>
-                r.status === "pending" && r.receiverId === session?.user?.id
-            ).length > 0 && (
-              <span className="ml-2 px-2 py-1 rounded-full bg-red-500 text-white text-xs">
-                {
-                  filteredRequests.filter(
-                    (r) =>
-                      r.status === "pending" &&
-                      r.receiverId === session?.user?.id
-                  ).length
-                }
+            {pendingCount > 0 && (
+              <span className="ml-2 px-2 py-1 rounded-full bg-red-500 text-white text-xs font-bold">
+                {pendingCount}
               </span>
             )}
           </button>
           <button
             onClick={() => setActiveTab("sent")}
-            className={`cursor-pointer flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
+            className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
               activeTab === "sent"
                 ? "bg-purple-600 text-white"
                 : "bg-gray-800/50 text-gray-400 hover:text-gray-300"
