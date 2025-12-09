@@ -34,7 +34,7 @@ export default function BoostButton({ playerId }) {
     <button
       onClick={handleBoost}
       disabled={loading || boosted}
-      className="px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500 transition-colors font-semibold disabled:opacity-50 flex items-center gap-2"
+      className="cursor-pointer px-6 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-500 transition-colors font-semibold disabled:opacity-50 flex items-center gap-2"
     >
       {loading ? (
         <Loader2 className="w-5 h-5 animate-spin" />

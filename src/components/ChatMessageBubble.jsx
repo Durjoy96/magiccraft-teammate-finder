@@ -12,7 +12,7 @@ export default function ChatMessageBubble({ message, isOwn, senderName }) {
         <div
           className={`rounded-2xl px-4 py-2 ${
             isOwn
-              ? "bg-gradient-to-r from-purple-600 to-cyan-600 text-white"
+              ? "bg-linear-to-r from-purple-600 to-cyan-600 text-white"
               : "bg-gray-700 text-gray-100"
           }`}
         >

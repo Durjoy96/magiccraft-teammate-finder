@@ -38,7 +38,7 @@ export default function TeamRequestCard({ request, type, onAction }) {
           <button
             onClick={() => handleAction("accept")}
             disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors disabled:opacity-50"
+            className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-500 transition-colors disabled:opacity-50"
           >
             <Check className="w-4 h-4" />
             Accept
@@ -46,7 +46,7 @@ export default function TeamRequestCard({ request, type, onAction }) {
           <button
             onClick={() => handleAction("reject")}
             disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 transition-colors disabled:opacity-50"
+            className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-200 text-red-950 font-semibold hover:opacity-80 transition-colors disabled:opacity-50"
           >
             <X className="w-4 h-4" />
             Reject

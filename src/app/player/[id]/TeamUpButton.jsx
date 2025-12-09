@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { UserPlus, Loader2, Check } from "lucide-react";
 
 export default function TeamUpButton({
@@ -10,7 +9,6 @@ export default function TeamUpButton({
 }) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const router = useRouter();
 
   const handleTeamUp = async () => {
     setLoading(true);
@@ -25,9 +23,6 @@ export default function TeamUpButton({
 
       if (res.ok) {
         setSent(true);
-        setTimeout(() => {
-          router.push("/requests");
-        }, 1500);
       } else {
         alert(data.error || "Failed to send request");
       }
@@ -56,9 +51,9 @@ export default function TeamUpButton({
     <button
       onClick={handleTeamUp}
       disabled={loading}
-      className={`${
+      className={`cursor-pointer ${
         fullWidth ? "w-full" : ""
-      } px-6 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 flex items-center justify-center gap-2`}
+      } px-6 py-2 rounded-lg bg-linear-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 flex items-center justify-center gap-2`}
     >
       {loading ? (
         <Loader2 className="w-5 h-5 animate-spin" />
