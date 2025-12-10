@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ChatMessageBubble from "@/components/ChatMessageBubble";
@@ -15,6 +15,7 @@ export default function TeamChatPage({ params }) {
   const [sending, setSending] = useState(false);
   const [team, setTeam] = useState(null);
   const messagesEndRef = useRef(null);
+  const { teamId } = React.use(params);
 
   useEffect(() => {
     if (session) {
@@ -22,7 +23,7 @@ export default function TeamChatPage({ params }) {
       const interval = setInterval(fetchMessages, 3000); // Poll every 3 seconds
       return () => clearInterval(interval);
     }
-  }, [session, params.teamId]);
+  }, [session, teamId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -36,8 +37,8 @@ export default function TeamChatPage({ params }) {
     setLoading(true);
     try {
       const [teamRes, messagesRes] = await Promise.all([
-        fetch(`/api/team/${params.teamId}`),
-        fetch(`/api/message/${params.teamId}`),
+        fetch(`/api/team/${teamId}`),
+        fetch(`/api/message/${teamId}`),
       ]);
 
       if (teamRes.ok && messagesRes.ok) {
@@ -46,7 +47,7 @@ export default function TeamChatPage({ params }) {
         setTeam(teamData.team);
         setMessages(messagesData.messages);
       } else {
-        router.push("/requests");
+        // router.push("/requests");
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
@@ -57,7 +58,7 @@ export default function TeamChatPage({ params }) {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`/api/message/${params.teamId}`);
+      const res = await fetch(`/api/message/${teamId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data.messages);
@@ -77,7 +78,7 @@ export default function TeamChatPage({ params }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          teamId: params.teamId,
+          teamId,
           content: newMessage.trim(),
         }),
       });
@@ -166,7 +167,7 @@ export default function TeamChatPage({ params }) {
             <button
               type="submit"
               disabled={!newMessage.trim() || sending}
-              className="px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-3 rounded-lg bg-linear-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 flex items-center gap-2"
             >
               {sending ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
