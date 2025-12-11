@@ -14,6 +14,9 @@ export async function POST(request) {
     const data = await request.json();
     const {
       username,
+      avatar,
+      uid,
+      level,
       role,
       skillLevel,
       playstyle,
@@ -21,7 +24,10 @@ export async function POST(request) {
       language,
       activeHours,
       voice,
+      discordTag,
       bio,
+      lookingFor,
+      experienceLevel,
     } = data;
 
     const client = await clientPromise;
@@ -32,6 +38,9 @@ export async function POST(request) {
       {
         $set: {
           username,
+          avatar,
+          uid,
+          level: level ? parseInt(level) : null,
           role,
           skillLevel,
           playstyle,
@@ -39,7 +48,11 @@ export async function POST(request) {
           language,
           activeHours,
           voice,
+          discordTag,
           bio,
+          lookingFor,
+          experienceLevel,
+          lastActive: new Date(),
           updatedAt: new Date(),
         },
       }

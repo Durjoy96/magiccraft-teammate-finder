@@ -10,21 +10,37 @@ export async function POST(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { role, skillLevel, region, language } = await request.json();
+    const {
+      role,
+      skillLevel,
+      region,
+      language,
+      experienceLevel,
+      lookingFor,
+      voiceOnly,
+    } = await request.json();
 
     const client = await clientPromise;
     const db = client.db();
 
-    const query = { role: { $ne: null } };
+    const query = {
+      role: { $ne: null },
+      _id: { $ne: session.user.id }, // Exclude self from search
+    };
 
     if (role) query.role = role;
     if (skillLevel) query.skillLevel = skillLevel;
-    if (region) query.region = new RegExp(region, "i");
+    if (region) query.region = region;
     if (language) query.language = new RegExp(language, "i");
+    if (experienceLevel) query.experienceLevel = experienceLevel;
+    if (lookingFor) query.lookingFor = lookingFor;
+    if (voiceOnly) query.voice = true;
 
     const players = await db
       .collection("users")
-      .find(query, { projection: { passwordHash: 0 } })
+      .find(query, {
+        projection: { passwordHash: 0, email: 0, uid: 0, discordTag: 0 },
+      })
       .sort({ boostedUntil: -1, createdAt: -1 })
       .limit(50)
       .toArray();

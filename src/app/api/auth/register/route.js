@@ -33,20 +33,41 @@ export async function POST(request) {
 
     const passwordHash = await hashPassword(password);
 
+    // Generate DiceBear avatar URL
+    const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
+      username
+    )}`;
+
     const result = await db.collection("users").insertOne({
       email,
       passwordHash,
       username,
+      avatar: avatarUrl,
+
+      // Game Profile
+      uid: null,
+      level: null,
       role: null,
       skillLevel: null,
       playstyle: null,
-      activeHours: null,
+
+      // Availability
       region: null,
       language: null,
+      activeHours: null,
+
+      // Communication (private until matched)
       voice: false,
+      discordTag: null,
+
+      // Optional
       bio: "",
-      avatar: null,
+      lookingFor: null,
+      experienceLevel: null,
+
+      // Meta
       boostedUntil: null,
+      lastActive: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
     });

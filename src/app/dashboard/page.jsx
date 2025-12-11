@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import RoleBadge from "@/components/RoleBadge";
-import { Edit, Search, Mail, Clock, Globe, MessageCircle } from "lucide-react";
+import { Search, Mail, Clock, Globe, MessageCircle, Users } from "lucide-react";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import { auth } from "@/lib/auth";
@@ -33,12 +33,12 @@ export default async function DashboardPage() {
 
       <div className="grid md:grid-cols-3 gap-6 mb-8">
         <Link
-          href="/profile"
+          href="/teams"
           className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition-all text-center group"
         >
-          <Edit className="w-8 h-8 mx-auto mb-3 text-purple-400 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold mb-1">Edit Profile</h3>
-          <p className="text-sm text-gray-400">Update your information</p>
+          <Users className="w-8 h-8 mx-auto mb-3 text-purple-400 group-hover:scale-110 transition-transform" />
+          <h3 className="font-semibold mb-1">My Teams</h3>
+          <p className="text-sm text-gray-400">Manage your active teams</p>
         </Link>
 
         <Link

@@ -21,8 +21,17 @@ export default function ProfileCard({ user, showActions = true }) {
         </div>
       )}
 
-      <div className="flex items-start justify-between mb-4">
-        <div>
+      <div className="flex items-start gap-4 mb-4">
+        {user.avatar && (
+          <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-700 border-2 border-purple-500/30 flex-shrink-0">
+            <img
+              src={user.avatar}
+              alt={user.username}
+              className="w-full h-full"
+            />
+          </div>
+        )}
+        <div className="flex-1">
           <h3 className="text-xl font-bold text-white mb-2">{user.username}</h3>
           <RoleBadge role={user.role} />
         </div>
@@ -33,20 +42,33 @@ export default function ProfileCard({ user, showActions = true }) {
           <span className="text-gray-400">Skill:</span>
           <span className="font-semibold">{user.skillLevel || "Not set"}</span>
         </div>
+        {user.experienceLevel && (
+          <div className="flex items-center gap-2">
+            <span className="text-gray-400">Experience:</span>
+            <span className="font-semibold">{user.experienceLevel}</span>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-gray-400" />
           <span>
             {user.region || "Not set"} • {user.language || "Not set"}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-gray-400" />
-          <span>{user.activeHours || "Not set"}</span>
-        </div>
+        {user.activeHours && (
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-gray-400" />
+            <span>{user.activeHours}</span>
+          </div>
+        )}
         {user.voice && (
           <div className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4 text-green-400" />
             <span className="text-green-400">Voice Chat Available</span>
+          </div>
+        )}
+        {user.lookingFor && (
+          <div className="px-2 py-1 rounded bg-purple-500/20 text-purple-300 text-xs inline-block">
+            {user.lookingFor}
           </div>
         )}
       </div>

@@ -26,14 +26,24 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: "Not a team member" }, { status: 403 });
     }
 
-    // Get member details
+    // Get member details WITH contact info (only visible to team members)
     const members = await db
       .collection("users")
       .find(
         { _id: { $in: team.members.map((id) => new ObjectId(id)) } },
-        { projection: { username: 1, role: 1 } }
+        {
+          projection: {
+            username: 1,
+            role: 1,
+            avatar: 1,
+            uid: 1,
+            discordTag: 1,
+            level: 1,
+          },
+        }
       )
       .toArray();
+
     return NextResponse.json({
       team: {
         ...team,
