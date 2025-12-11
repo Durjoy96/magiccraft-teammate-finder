@@ -68,6 +68,8 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [showRoleInfo, setShowRoleInfo] = useState(false);
 
+  if (!session) router.push("/auth/login");
+
   const [formData, setFormData] = useState({
     username: "",
     avatar: "",
@@ -131,9 +133,7 @@ export default function ProfilePage() {
   };
 
   const regenerateAvatar = () => {
-    const newAvatar = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
-      formData.username
-    )}&random=${Date.now()}`;
+    const newAvatar = `https://api.dicebear.com/7.x/adventurer/svg?seed=${Date.now()}`;
     setFormData({ ...formData, avatar: newAvatar });
   };
 
@@ -216,7 +216,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={regenerateAvatar}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition-colors text-sm font-semibold"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition-colors text-sm font-semibold cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
                 Regenerate Avatar
@@ -523,7 +523,7 @@ export default function ProfilePage() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full px-6 py-3 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full px-6 py-3 rounded-lg bg-linear-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
         >
           {saving ? (
             <>

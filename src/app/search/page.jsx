@@ -251,7 +251,7 @@ export default function SearchPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-6 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-2 rounded-lg bg-linear-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
