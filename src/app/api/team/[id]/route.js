@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 
 export async function GET(request, { params }) {
   try {
+    const { id } = await params;
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -14,7 +15,7 @@ export async function GET(request, { params }) {
     const db = client.db();
 
     const team = await db.collection("teams").findOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
     });
 
     if (!team) {

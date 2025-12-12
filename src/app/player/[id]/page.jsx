@@ -10,6 +10,9 @@ import {
   Mail,
   Zap,
   ArrowLeft,
+  Award,
+  Target,
+  Shield,
 } from "lucide-react";
 import Link from "next/link";
 import TeamUpButton from "./TeamUpButton";
@@ -19,12 +22,10 @@ async function getPlayer(id) {
   try {
     const client = await clientPromise;
     const db = client.db();
-    const player = await db
-      .collection("users")
-      .findOne(
-        { _id: new ObjectId(id) },
-        { projection: { passwordHash: 0, email: 0 } }
-      );
+    const player = await db.collection("users").findOne(
+      { _id: new ObjectId(id) },
+      { projection: { passwordHash: 0, email: 0, uid: 0, discordTag: 0 } } // Hide private info
+    );
     return player ? JSON.parse(JSON.stringify(player)) : null;
   } catch (error) {
     return null;
@@ -32,15 +33,14 @@ async function getPlayer(id) {
 }
 
 export default async function PlayerDetailPage({ params }) {
+  const { id } = await params;
   const session = await auth();
 
   if (!session?.user) {
     redirect("/auth/login");
   }
 
-  const userId = await params;
-
-  const player = await getPlayer(userId);
+  const player = await getPlayer(id);
 
   if (!player) {
     return (
@@ -89,30 +89,69 @@ export default async function PlayerDetailPage({ params }) {
           </div>
         )}
 
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-4xl font-bold mb-3">{player.username}</h1>
-            <RoleBadge role={player.role} />
-          </div>
-
-          {isOwnProfile ? (
-            <Link
-              href="/profile"
-              className="px-6 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition-colors font-semibold"
-            >
-              Edit Profile
-            </Link>
-          ) : (
-            <div className="flex gap-3">
-              <TeamUpButton playerId={player._id} />
-              <BoostButton playerId={player._id} />
+        <div className="flex items-start gap-6 mb-6">
+          {/* Avatar */}
+          {player.avatar && (
+            <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-700 border-4 border-purple-500/30 flex-shrink-0">
+              <img
+                src={player.avatar}
+                alt={player.username}
+                className="w-full h-full"
+              />
             </div>
           )}
+
+          <div className="flex-1">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h1 className="text-4xl font-bold mb-2">{player.username}</h1>
+                {player.level && (
+                  <div className="flex items-center gap-2 text-gray-400 mb-2">
+                    <Award className="w-4 h-4" />
+                    <span>Level {player.level}</span>
+                  </div>
+                )}
+                <RoleBadge role={player.role} />
+              </div>
+
+              {isOwnProfile ? (
+                <Link
+                  href="/profile"
+                  className="px-6 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition-colors font-semibold"
+                >
+                  Edit Profile
+                </Link>
+              ) : (
+                <div className="flex gap-3">
+                  <TeamUpButton playerId={player._id} />
+                  <BoostButton playerId={player._id} />
+                </div>
+              )}
+            </div>
+
+            {/* Quick Stats */}
+            <div className="flex flex-wrap gap-2 mt-4">
+              {player.experienceLevel && (
+                <div className="px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 text-sm font-semibold border border-cyan-500/30">
+                  {player.experienceLevel}
+                </div>
+              )}
+              {player.lookingFor && (
+                <div className="px-3 py-1 rounded-lg bg-purple-500/20 text-purple-400 text-sm font-semibold border border-purple-500/30">
+                  {player.lookingFor}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-8">
-          <div>
-            <h2 className="text-xl font-bold mb-4">Player Information</h2>
+          {/* Player Information */}
+          <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700">
+            <div className="flex items-center gap-2 mb-4">
+              <Target className="w-5 h-5 text-purple-400" />
+              <h2 className="text-xl font-bold">Player Information</h2>
+            </div>
             <div className="space-y-3">
               <div>
                 <p className="text-sm text-gray-400 mb-1">Skill Level</p>
@@ -126,62 +165,106 @@ export default async function PlayerDetailPage({ params }) {
                   {player.playstyle || "Not set"}
                 </p>
               </div>
+              {player.experienceLevel && (
+                <div>
+                  <p className="text-sm text-gray-400 mb-1">Experience Level</p>
+                  <p className="text-lg font-semibold">
+                    {player.experienceLevel}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
-          <div>
-            <h2 className="text-xl font-bold mb-4">Availability</h2>
+          {/* Availability */}
+          <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700">
+            <div className="flex items-center gap-2 mb-4">
+              <Globe className="w-5 h-5 text-cyan-400" />
+              <h2 className="text-xl font-bold">Availability</h2>
+            </div>
             <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-300">
-                  {player.region || "Not set"} • {player.language || "Not set"}
-                </span>
+              <div className="flex items-start gap-2">
+                <Globe className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm text-gray-400">Region & Language</p>
+                  <p className="text-gray-300 font-semibold">
+                    {player.region || "Not set"} •{" "}
+                    {player.language || "Not set"}
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-300">
-                  {player.activeHours || "Not set"}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-gray-400" />
-                <span
-                  className={player.voice ? "text-green-400" : "text-gray-300"}
-                >
-                  Voice Chat: {player.voice ? "Available" : "Not available"}
-                </span>
+
+              {player.activeHours && (
+                <div className="flex items-start gap-2">
+                  <Clock className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-gray-400">Active Hours</p>
+                    <p className="text-gray-300 font-semibold">
+                      {player.activeHours}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-start gap-2">
+                <MessageCircle
+                  className={`w-5 h-5 mt-0.5 flex-shrink-0 ${
+                    player.voice ? "text-green-400" : "text-gray-400"
+                  }`}
+                />
+                <div>
+                  <p className="text-sm text-gray-400">Voice Chat</p>
+                  <p
+                    className={`font-semibold ${
+                      player.voice ? "text-green-400" : "text-gray-300"
+                    }`}
+                  >
+                    {player.voice ? "Available" : "Not available"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Looking For */}
+        {player.lookingFor && (
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6 mb-8">
+            <div className="flex items-start gap-3">
+              <Shield className="w-6 h-6 text-purple-400 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Looking For</h3>
+                <p className="text-gray-300">{player.lookingFor}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bio */}
         {player.bio && (
-          <div>
+          <div className="bg-gray-900/50 rounded-xl p-6 border border-gray-700 mb-8">
             <h2 className="text-xl font-bold mb-4">About</h2>
             <p className="text-gray-300 leading-relaxed">{player.bio}</p>
           </div>
         )}
 
+        {/* Call to Action */}
         {!isOwnProfile && (
-          <div className="mt-8 pt-8 border-t border-gray-700">
-            <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-6">
-              <div className="flex items-start gap-4">
-                <Mail className="w-6 h-6 text-purple-400 shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">
-                    Want to team up?
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4">
-                    Send a team request to {player.username} and start playing
-                    together!
-                  </p>
-                  <TeamUpButton
-                    playerId={player._id}
-                    showIcon={false}
-                    fullWidth={false}
-                  />
-                </div>
+          <div className="bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-xl p-6">
+            <div className="flex items-start gap-4">
+              <Mail className="w-6 h-6 text-purple-400 flex-shrink-0 mt-1" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg mb-2">Want to team up?</h3>
+                <p className="text-gray-400 text-sm mb-4">
+                  Send a team request to {player.username} and start playing
+                  together! Once accepted, you&apos;ll be able to chat and
+                  exchange contact information.
+                </p>
+                <TeamUpButton
+                  playerId={player._id}
+                  showIcon={false}
+                  fullWidth={false}
+                />
               </div>
             </div>
           </div>

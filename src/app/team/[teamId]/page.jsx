@@ -171,7 +171,7 @@ export default function TeamChatPage({ params }) {
                           {copiedField === "uid" ? (
                             <Check className="w-4 h-4 text-green-400" />
                           ) : (
-                            <Copy className="w-4 h-4 text-gray-400" />
+                            <Copy className="w-4 h-4 text-gray-400 cursor-pointer" />
                           )}
                         </button>
                       </div>
@@ -194,7 +194,7 @@ export default function TeamChatPage({ params }) {
                           {copiedField === "discord" ? (
                             <Check className="w-4 h-4 text-green-400" />
                           ) : (
-                            <Copy className="w-4 h-4 text-gray-400" />
+                            <Copy className="w-4 h-4 text-gray-400 cursor-pointer" />
                           )}
                         </button>
                       </div>
