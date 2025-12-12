@@ -1,6 +1,6 @@
 import Link from "next/link";
 import RoleBadge from "./RoleBadge";
-import { Clock, Globe, MessageCircle, Zap } from "lucide-react";
+import { Clock, Globe, MessageCircle, Zap, Award } from "lucide-react";
 
 export default function ProfileCard({ user, showActions = true }) {
   const isBoosted =
@@ -31,8 +31,16 @@ export default function ProfileCard({ user, showActions = true }) {
             />
           </div>
         )}
-        <div className="flex-1">
-          <h3 className="text-xl font-bold text-white mb-2">{user.username}</h3>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl font-bold text-white mb-1 truncate">
+            {user.username}
+          </h3>
+          {user.level && (
+            <div className="flex items-center gap-1 text-xs text-gray-400 mb-2">
+              <Award className="w-3 h-3" />
+              <span>Level {user.level}</span>
+            </div>
+          )}
           <RoleBadge role={user.role} />
         </div>
       </div>
@@ -50,28 +58,31 @@ export default function ProfileCard({ user, showActions = true }) {
         )}
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-gray-400" />
-          <span>
+          <span className="truncate">
             {user.region || "Not set"} • {user.language || "Not set"}
           </span>
         </div>
         {user.activeHours && (
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-gray-400" />
-            <span>{user.activeHours}</span>
+            <span className="truncate">{user.activeHours}</span>
           </div>
         )}
         {user.voice && (
           <div className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4 text-green-400" />
-            <span className="text-green-400">Voice Chat Available</span>
-          </div>
-        )}
-        {user.lookingFor && (
-          <div className="px-2 py-1 rounded bg-purple-500/20 text-purple-300 text-xs inline-block">
-            {user.lookingFor}
+            <span className="text-green-400">Voice Available</span>
           </div>
         )}
       </div>
+
+      {user.lookingFor && (
+        <div className="mb-4">
+          <div className="px-2 py-1 rounded bg-purple-500/20 text-purple-300 text-xs inline-block">
+            {user.lookingFor}
+          </div>
+        </div>
+      )}
 
       {user.bio && (
         <p className="text-sm text-gray-400 mb-4 line-clamp-2">{user.bio}</p>
