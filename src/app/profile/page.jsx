@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Loader2, Save, RefreshCw, Info } from "lucide-react";
+import { Loader2, Save, RefreshCw, Info, Sparkles, Wand2 } from "lucide-react";
 
 const ROLES = [
   {
@@ -68,7 +68,10 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [showRoleInfo, setShowRoleInfo] = useState(false);
 
-  if (!session) router.push("/auth/login");
+  // AI Bio Generator states
+  const [generatingBio, setGeneratingBio] = useState(false);
+  const [showBioOptions, setShowBioOptions] = useState(false);
+  const [bioOptions, setBioOptions] = useState(null);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -137,6 +140,50 @@ export default function ProfilePage() {
     setFormData({ ...formData, avatar: newAvatar });
   };
 
+  const handleGenerateBio = async () => {
+    if (!formData.role || !formData.skillLevel || !formData.playstyle) {
+      setError("Please fill in Role, Skill Level, and Playstyle first");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
+
+    setGeneratingBio(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/ai/generate-bio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          role: formData.role,
+          skillLevel: formData.skillLevel,
+          playstyle: formData.playstyle,
+          lookingFor: formData.lookingFor,
+          experienceLevel: formData.experienceLevel,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setBioOptions(data.bios);
+        setShowBioOptions(true);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to generate bio");
+      }
+    } catch (err) {
+      setError("Failed to generate bio. Please try again.");
+    } finally {
+      setGeneratingBio(false);
+    }
+  };
+
+  const selectBio = (bioType) => {
+    setFormData({ ...formData, bio: bioOptions[bioType] });
+    setShowBioOptions(false);
+    setBioOptions(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -180,7 +227,7 @@ export default function ProfilePage() {
     <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Edit Profile</h1>
-        <p className="text-gray-400">Update your player information</p>
+        <p className="text-gray-400">Update your information</p>
       </div>
 
       {success && (
@@ -216,7 +263,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 onClick={regenerateAvatar}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition-colors text-sm font-semibold cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 transition-colors text-sm font-semibold"
               >
                 <RefreshCw className="w-4 h-4" />
                 Regenerate Avatar
@@ -507,9 +554,103 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Bio */}
-        <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/20">
-          <h2 className="text-xl font-bold mb-4">About You</h2>
+        {/* Bio with AI Generator */}
+        <div className="bg-gradient-to-br from-purple-500/10 to-cyan-500/10 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-400" />
+              <h2 className="text-xl font-bold">About You</h2>
+            </div>
+            <button
+              type="button"
+              onClick={handleGenerateBio}
+              disabled={
+                generatingBio ||
+                !formData.role ||
+                !formData.skillLevel ||
+                !formData.playstyle
+              }
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm cursor-pointer"
+            >
+              {generatingBio ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="w-4 h-4" />
+                  Generate with AI
+                </>
+              )}
+            </button>
+          </div>
+
+          {!formData.role || !formData.skillLevel || !formData.playstyle ? (
+            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-4 text-sm text-yellow-400">
+              Fill in Role, Skill Level, and Playstyle to use AI bio generator
+            </div>
+          ) : null}
+
+          {showBioOptions && bioOptions && (
+            <div className="mb-4 space-y-3">
+              <p className="text-sm text-gray-400 mb-3">Choose a bio style:</p>
+
+              <button
+                type="button"
+                onClick={() => selectBio("professional")}
+                className="w-full text-left p-4 bg-gray-900/50 hover:bg-gray-800 rounded-lg border border-gray-700 hover:border-purple-500/50 transition-all cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-purple-400">
+                    Professional
+                  </span>
+                  <span className="text-xs text-gray-500">Click to use</span>
+                </div>
+                <p className="text-sm text-gray-300">
+                  {bioOptions.professional}
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => selectBio("casual")}
+                className="w-full text-left p-4 bg-gray-900/50 hover:bg-gray-800 rounded-lg border border-gray-700 hover:border-cyan-500/50 transition-all cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-cyan-400">Casual</span>
+                  <span className="text-xs text-gray-500">Click to use</span>
+                </div>
+                <p className="text-sm text-gray-300">{bioOptions.casual}</p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => selectBio("competitive")}
+                className="w-full text-left p-4 bg-gray-900/50 hover:bg-gray-800 rounded-lg border border-gray-700 hover:border-red-500/50 transition-all cursor-pointer"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-red-400">
+                    Competitive
+                  </span>
+                  <span className="text-xs text-gray-500">Click to use</span>
+                </div>
+                <p className="text-sm text-gray-300">
+                  {bioOptions.competitive}
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleGenerateBio}
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors text-sm font-semibold cursor-pointer"
+              >
+                <RefreshCw className="w-4 h-4 inline mr-2" />
+                Generate New Options
+              </button>
+            </div>
+          )}
+
           <textarea
             name="bio"
             value={formData.bio}
