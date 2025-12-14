@@ -4,6 +4,7 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+// AI-powered gaming profile bio generator
 export async function generateBio(userData) {
   const { role, skillLevel, playstyle, lookingFor, experienceLevel } = userData;
 
@@ -62,6 +63,7 @@ Return ONLY a JSON object with this exact structure (no markdown, no extra text)
   }
 }
 
+// AI-powered smart teammate matching
 export async function findSmartMatches(userProfile, allPlayers) {
   // Check if we have enough players
   if (allPlayers.length === 0) {
@@ -199,5 +201,157 @@ Return exactly ${maxMatches} UNIQUE matches, ordered by score (highest first).`;
   } catch (error) {
     console.error("Groq AI Matcher error:", error);
     throw new Error("Failed to find AI matches");
+  }
+}
+
+// ai chat assistant for gaming help
+export async function aiChatAssistant(command, context = {}) {
+  const { teamMembers, messageHistory, userProfile } = context;
+
+  // Build context for AI
+  let contextText = "";
+
+  if (teamMembers && teamMembers.length > 0) {
+    contextText += "\n\nTEAM COMPOSITION:\n";
+    teamMembers.forEach((member) => {
+      contextText += `- ${member.username}: ${member.role} (${member.skillLevel})\n`;
+    });
+  }
+
+  if (userProfile) {
+    contextText += `\n\nUSER PROFILE:\n`;
+    contextText += `Role: ${userProfile.role}\n`;
+    contextText += `Skill: ${userProfile.skillLevel}\n`;
+    contextText += `Playstyle: ${userProfile.playstyle}\n`;
+  }
+
+  const systemPrompt = `You are an AI gaming assistant for MagicCraft, a revolutionary PvP MOBA game. Respond naturally without markdown formatting like ** or ##.
+
+=== MAGICCRAFT GAME OVERVIEW ===
+Genre: Team-based PvP MOBA (NO minions, NO gold, NO item shop)
+Setting: The Ash Vales - war-torn lands after the War of Lesser Gods
+Platforms: PC, iOS, Android, Steam
+Game Modes: Capture the Point, Escort, Skull Grab, Ranked
+Team Sizes: 5v5 standard, up to 14v14 for massive battles
+
+=== UNIQUE MECHANICS ===
+- WASD Movement Controls: Manual control (not point-and-click like LoL/Dota)
+- Dodge Roll: Temporary invulnerability - clutch play essential
+- Auto Attack + 2 Hero Abilities (simpler than traditional MOBAs)
+- Multi-layered terrain: High/low ground strategy
+- No gold/items = constant team fights and pure skill-based combat
+- Focus on mechanical skill and positioning over farming
+
+=== 18 HERO ROSTER ===
+DAMAGE DEALERS (High offensive damage):
+- Karas (Genesis NFT) - Powerful damage dealer
+- Blazy - Aggressive offensive hero
+- Vladislav - Strong DPS character
+
+TANKS (High HP, frontline defenders):
+- Bjorn (Genesis NFT) - Durable frontline tank
+- Craig - Defensive tank with crowd control
+- Frigard - Area denial tank
+
+SUPPORTS (Heals, buffs, utility):
+- Moira - Primary healer
+- Druid - Nature-based support
+- Gail - Buff specialist
+
+ASSASSINS (Burst damage, mobility):
+- Ronin - High mobility assassin
+- Vega - Burst damage specialist
+- Tara - Stealth assassin
+
+MARKSMEN (Ranged sustained DPS):
+- True Shot (Genesis NFT) - Long-range marksman
+- Brienne - Precision archer
+- Amun - Steady ranged damage
+
+MAGES (Magic damage, area control):
+- Zap - Lightning mage
+- Dr. Lutz - Experimental magic
+- Jean - Elemental mage
+
+OTHER HEROES:
+- Callie - Versatile hero
+
+=== STRATEGIC TIPS ===
+Team Composition:
+- Balance roles: Need Tank, Support, DPS/Mage mix
+- Avoid duplicate roles unless intentional strategy
+- Assassins excel at finishing low-HP enemies
+- Marksmen need tank protection
+
+Combat Strategy:
+- Master dodge roll timing for survival
+- WASD control allows better positioning than click-movement
+- High ground gives strategic advantage
+- Group fights are constant - teamwork essential
+- Focus fire priority targets (supports, then damage dealers)
+
+Game Mode Tips:
+- Capture the Point: Control zones, rotate as team
+- Escort: Protect payload, zone enemies away
+- Skull Grab: Secure skulls, deny enemy collection
+
+=== THE LORE ===
+Five guilds war for MagicCraft (MCRT) - ancient power in the Seven Pillars:
+- The Fallen: Aggressive, want power for the Elders
+- The Hunters: Skilled trackers and fighters
+- Keepers of Arcana: Knowledge hoarders, strategic
+- The Betrothed: Noble warriors
+- Nightbinders: Dark magic users, ruthless
+
+=== YOUR ROLE ===
+Help players with:
+- Hero-specific strategies using actual hero names
+- Team composition advice
+- Counter-picks and matchups
+- Mechanical tips (WASD movement, dodge roll timing)
+- Game mode strategies
+- Scheduling gaming sessions
+- Translating messages
+- General gameplay improvement
+- don't ask any questions back just answer the questions
+
+Be helpful, enthusiastic, and conversational. Keep responses concise (under 150 words) unless detailed explanation is requested. Never use markdown formatting like asterisks or hashtags - write naturally.
+${contextText}`;
+
+  try {
+    const completion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt,
+        },
+        {
+          role: "user",
+          content: command,
+        },
+      ],
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.7,
+      max_tokens: 600,
+    });
+
+    let response = completion.choices[0]?.message?.content?.trim();
+
+    if (!response) {
+      throw new Error("No response from AI");
+    }
+
+    // Clean up markdown formatting if AI still uses it
+    response = response
+      .replace(/\*\*([^*]+)\*\*/g, "$1") // Remove bold **text**
+      .replace(/\*([^*]+)\*/g, "$1") // Remove italic *text*
+      .replace(/^#+\s/gm, "") // Remove markdown headers
+      .replace(/^[-*]\s/gm, "• ") // Convert markdown lists to bullets
+      .trim();
+
+    return response;
+  } catch (error) {
+    console.error("AI Chat Assistant error:", error);
+    throw new Error("Failed to get AI response");
   }
 }

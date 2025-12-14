@@ -29,8 +29,12 @@ export async function GET(request, { params }) {
       .sort({ createdAt: 1 })
       .toArray();
 
-    // Get sender names
-    const senderIds = [...new Set(messages.map((m) => m.senderId))];
+    // Get sender names (skip for AI messages)
+    const senderIds = [
+      ...new Set(
+        messages.filter((m) => m.senderId !== "ai").map((m) => m.senderId)
+      ),
+    ];
     const users = await db
       .collection("users")
       .find(
@@ -46,7 +50,8 @@ export async function GET(request, { params }) {
 
     const populatedMessages = messages.map((msg) => ({
       ...msg,
-      senderName: userMap[msg.senderId],
+      senderName:
+        msg.senderId === "ai" ? "AI Assistant" : userMap[msg.senderId],
     }));
 
     return NextResponse.json({

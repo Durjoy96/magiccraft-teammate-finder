@@ -10,7 +10,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { teamId, content } = await request.json();
+    const { teamId, content, isAi, isAiCommand } = await request.json();
 
     if (!content?.trim()) {
       return NextResponse.json(
@@ -22,19 +22,23 @@ export async function POST(request) {
     const client = await clientPromise;
     const db = client.db();
 
-    // Verify team membership
-    const team = await db.collection("teams").findOne({
-      _id: new ObjectId(teamId),
-    });
+    // Verify team membership (skip for AI messages)
+    if (!isAi) {
+      const team = await db.collection("teams").findOne({
+        _id: new ObjectId(teamId),
+      });
 
-    if (!team || !team.members.includes(session.user.id)) {
-      return NextResponse.json({ error: "Not authorized" }, { status: 403 });
+      if (!team || !team.members.includes(session.user.id)) {
+        return NextResponse.json({ error: "Not authorized" }, { status: 403 });
+      }
     }
 
     const result = await db.collection("messages").insertOne({
       teamId,
-      senderId: session.user.id,
+      senderId: isAi ? "ai" : session.user.id,
       content: content.trim(),
+      isAi: isAi || false,
+      isAiCommand: isAiCommand || false,
       createdAt: new Date(),
     });
 
