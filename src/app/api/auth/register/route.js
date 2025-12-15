@@ -66,7 +66,11 @@ export async function POST(request) {
       experienceLevel: null,
 
       // Meta
-      boostedUntil: null,
+      mcrtBalance: 500, // Free 500 MCRT for new users
+      boostTier: null,
+      profileViews: 0,
+      totalBoosts: 0,
+      lastBoostDate: null,
       lastActive: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),

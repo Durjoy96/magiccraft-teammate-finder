@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import DashboardBoostSection from "@/components/DashboardBoostSection";
 
 async function getUserProfile(userId) {
   const client = await clientPromise;
@@ -151,6 +152,11 @@ export default async function DashboardPage() {
           <h3 className="font-semibold mb-1">Requests</h3>
           <p className="text-sm text-gray-400">Manage team invites</p>
         </Link>
+      </div>
+
+      {/* Boost Section */}
+      <div className="mb-8">
+        <DashboardBoostSection user={user} />
       </div>
 
       {/* Profile Overview */}

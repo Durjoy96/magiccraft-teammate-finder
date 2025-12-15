@@ -41,7 +41,10 @@ export async function POST(request) {
       .find(query, {
         projection: { passwordHash: 0, email: 0, uid: 0, discordTag: 0 },
       })
-      .sort({ boostedUntil: -1, createdAt: -1 })
+      .sort({
+        boostedUntil: -1, // Boosted profiles first
+        createdAt: -1,
+      })
       .limit(50)
       .toArray();
 
