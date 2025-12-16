@@ -66,7 +66,7 @@ export async function POST(request) {
       experienceLevel: null,
 
       // Meta
-      mcrtBalance: 500, // Free 500 MCRT for new users
+      mcrtBalance: 2000, // Free 2000 MCRT for new users
       boostTier: null,
       profileViews: 0,
       totalBoosts: 0,

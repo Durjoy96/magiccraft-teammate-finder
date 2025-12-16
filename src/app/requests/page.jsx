@@ -84,7 +84,7 @@ export default function RequestsPage() {
         <div className="flex border-b border-gray-700">
           <button
             onClick={() => setActiveTab("incoming")}
-            className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
+            className={`cursor-pointer flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
               activeTab === "incoming"
                 ? "bg-purple-600 text-white"
                 : "bg-gray-800/50 text-gray-400 hover:text-gray-300"
@@ -100,7 +100,7 @@ export default function RequestsPage() {
           </button>
           <button
             onClick={() => setActiveTab("sent")}
-            className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
+            className={`cursor-pointer flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
               activeTab === "sent"
                 ? "bg-purple-600 text-white"
                 : "bg-gray-800/50 text-gray-400 hover:text-gray-300"

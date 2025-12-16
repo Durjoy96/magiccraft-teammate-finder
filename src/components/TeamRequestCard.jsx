@@ -29,11 +29,20 @@ export default function TeamRequestCard({ request, type, onAction }) {
   return (
     <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-purple-500/20">
       <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-bold text-white mb-2">
-            {otherUser.username}
-          </h3>
-          <RoleBadge role={otherUser.role} />
+        <div className="flex items-start gap-2">
+          <img
+            src={otherUser.avatar}
+            width={70}
+            height={70}
+            alt="avatar"
+            className="border border-purple-500 rounded-full"
+          />
+          <div>
+            <h3 className="text-lg font-bold text-white mb-2">
+              {otherUser.username}
+            </h3>
+            <RoleBadge role={otherUser.role} />
+          </div>
         </div>
         <div className="flex items-center gap-2 text-xs text-gray-400">
           <Clock className="w-4 h-4" />
@@ -51,7 +60,7 @@ export default function TeamRequestCard({ request, type, onAction }) {
           <button
             onClick={() => handleAction("accept")}
             disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors disabled:opacity-50"
+            className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors disabled:opacity-50"
           >
             <Check className="w-4 h-4" />
             Accept
@@ -59,7 +68,7 @@ export default function TeamRequestCard({ request, type, onAction }) {
           <button
             onClick={() => handleAction("reject")}
             disabled={loading}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 transition-colors disabled:opacity-50"
+            className="cursor-pointer flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 transition-colors disabled:opacity-50"
           >
             <X className="w-4 h-4" />
             Reject
@@ -76,7 +85,7 @@ export default function TeamRequestCard({ request, type, onAction }) {
       {request.status === "accepted" && (
         <button
           onClick={handleOpenChat}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold"
+          className="cursor-pointer w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-semibold"
         >
           <MessageSquare className="w-4 h-4" />
           Open Team Chat

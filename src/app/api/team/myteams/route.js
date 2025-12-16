@@ -25,7 +25,7 @@ export async function GET() {
       .collection("users")
       .find(
         { _id: { $in: allMemberIds.map((id) => new ObjectId(id)) } },
-        { projection: { username: 1, role: 1 } }
+        { projection: { username: 1, role: 1, avatar: 1 } }
       )
       .toArray();
 

@@ -2,15 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import {
-  Users,
-  LogOut,
-  Search,
-  Bell,
-  ChevronDown,
-  Mail,
-  Clock,
-} from "lucide-react";
+import { Users, LogOut, Search, Bell, Mail, Clock } from "lucide-react";
 
 export default function Navbar() {
   const { data: session } = useSession();
