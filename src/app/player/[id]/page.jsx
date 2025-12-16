@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import TeamUpButton from "./TeamUpButton";
-import BoostButton from "./BoostButton";
 
 async function getPlayer(id) {
   try {
@@ -75,12 +74,12 @@ export default async function PlayerDetailPage({ params }) {
       <div
         className={`bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 border ${
           isBoosted
-            ? "border-yellow-500/50 shadow-lg shadow-yellow-500/20"
+            ? "border-purple-500/50 shadow-lg shadow-yellow-500/20"
             : "border-purple-500/20"
         }`}
       >
         {isBoosted && (
-          <div className="flex items-center gap-2 mb-4 text-yellow-400 text-sm font-semibold">
+          <div className="flex items-center gap-2 mb-4 text-purple-500 text-sm font-semibold">
             <Zap className="w-5 h-5" />
             <span>BOOSTED PROFILE</span>
             <span className="text-gray-400">
@@ -124,7 +123,6 @@ export default async function PlayerDetailPage({ params }) {
               ) : (
                 <div className="flex gap-3">
                   <TeamUpButton playerId={player._id} />
-                  <BoostButton playerId={player._id} />
                 </div>
               )}
             </div>
