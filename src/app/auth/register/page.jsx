@@ -67,7 +67,7 @@ export default function RegisterPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-cyan-600 mb-4">
             <UserPlus className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-bold mb-2">Join MCTF</h1>
+          <h1 className="text-3xl font-bold mb-2">Join MatchCraft</h1>
           <p className="text-gray-400">
             Create your account and find teammates
           </p>

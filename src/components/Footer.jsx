@@ -11,8 +11,7 @@ export default function Footer() {
             MagicCraft Community
           </p>
           <p className="mt-2">
-            © {today.getFullYear()} MagicCraft Teammate Finder. All rights
-            reserved.
+            © {today.getFullYear()} MatchCraft. All rights reserved.
           </p>
         </div>
       </div>
