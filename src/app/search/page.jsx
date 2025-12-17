@@ -154,7 +154,7 @@ export default function SearchPage() {
             <button
               onClick={handleAiMatch}
               disabled={aiMatching}
-              className="group relative px-10 py-6 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-500 hover:via-pink-500 hover:to-cyan-500 transition-all duration-300 font-bold text-xl disabled:opacity-50 flex items-center justify-center gap-4 shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105"
+              className="group relative px-10 py-6 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600 hover:from-purple-500 hover:via-pink-500 hover:to-cyan-500 transition-all duration-300 font-bold text-xl disabled:opacity-50 flex items-center justify-center gap-4 shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105 cursor-pointer"
             >
               {aiMatching ? (
                 <>
@@ -169,7 +169,6 @@ export default function SearchPage() {
                   <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                     Find Teammates with AI
                   </span>
-                  <Zap className="w-8 h-8 animate-pulse" />
                 </>
               )}
 
@@ -183,7 +182,7 @@ export default function SearchPage() {
                   setShowAiResults(false);
                   searchPlayers();
                 }}
-                className="text-sm text-purple-400 hover:text-purple-300 underline flex items-center gap-2"
+                className="text-sm text-purple-400 hover:text-purple-300 underline flex items-center gap-2 cursor-pointer"
               >
                 <X className="w-4 h-4" />
                 Clear AI Results
@@ -205,7 +204,7 @@ export default function SearchPage() {
             {/* Toggle Filters Button */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="w-full md:w-auto px-6 py-3 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-purple-500/20 hover:border-purple-500/40 transition-all flex items-center justify-center gap-3 font-semibold mb-4"
+              className="w-full md:w-auto px-6 py-3 rounded-xl bg-gray-800/50 hover:bg-gray-800 border border-purple-500/20 hover:border-purple-500/40 transition-all flex items-center justify-center gap-3 font-semibold mb-4 cursor-pointer"
             >
               <SlidersHorizontal className="w-5 h-5 text-purple-400" />
               <span>Manual Search Filters</span>
@@ -232,7 +231,7 @@ export default function SearchPage() {
                   {activeFilterCount > 0 && (
                     <button
                       onClick={clearFilters}
-                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors cursor-pointer"
                     >
                       <X className="w-4 h-4" />
                       Clear All
@@ -368,7 +367,7 @@ export default function SearchPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-bold text-lg disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg"
+                    className="w-full px-8 py-4 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 transition-all font-bold text-lg disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg cursor-pointer"
                   >
                     {loading ? (
                       <>
