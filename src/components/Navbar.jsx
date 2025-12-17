@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Users, LogOut, Search, Bell, Mail, Clock } from "lucide-react";
+import Image from "next/image";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -74,9 +75,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center gap-2">
-            <Users className="w-8 h-8 text-purple-400" />
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              MCTF
+            <img
+              src="/logo.png"
+              width={100}
+              height={100}
+              alt="logo"
+              className="w-10 h-10 md:w-14 md:h-14 rounded-full"
+            />
+            <span className="text-lg md:text-xl font-bold bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              MatchCraft
             </span>
           </Link>
 
@@ -153,7 +160,7 @@ export default function Navbar() {
                                     {formatTimeAgo(notif.createdAt)}
                                   </div>
                                 </div>
-                                <Mail className="w-4 h-4 text-purple-400 flex-shrink-0" />
+                                <Mail className="w-4 h-4 text-purple-400 shrink-0" />
                               </div>
                             </Link>
                           ))
